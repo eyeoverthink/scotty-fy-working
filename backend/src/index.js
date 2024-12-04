@@ -1,6 +1,5 @@
 import express from "express";
 import dotenv from "dotenv";
-import { clerkMiddleware } from "@clerk/express";
 import fileUpload from "express-fileupload";
 import path from "path";
 import cors from "cors";
@@ -17,6 +16,7 @@ import authRoutes from "./routes/auth.route.js";
 import songRoutes from "./routes/song.route.js";
 import albumRoutes from "./routes/album.route.js";
 import statRoutes from "./routes/stat.route.js";
+import { errorHandler } from "./middleware/error.middleware.js";
 
 dotenv.config();
 
@@ -35,7 +35,7 @@ app.use(
 );
 
 app.use(express.json()); // to parse req.body
-app.use(clerkMiddleware()); // this will add auth to req obj => req.auth
+// Removed Clerk middleware
 app.use(
 	fileUpload({
 		useTempFiles: true,
@@ -70,6 +70,9 @@ app.use("/api/songs", songRoutes);
 app.use("/api/albums", albumRoutes);
 app.use("/api/stats", statRoutes);
 
+// Error handling middleware should be last
+app.use(errorHandler);
+
 if (process.env.NODE_ENV === "production") {
 	app.use(express.static(path.join(__dirname, "../frontend/dist")));
 	app.get("*", (req, res) => {
@@ -77,12 +80,7 @@ if (process.env.NODE_ENV === "production") {
 	});
 }
 
-// error handler
-app.use((err, req, res, next) => {
-	res.status(500).json({ message: process.env.NODE_ENV === "production" ? "Internal server error" : err.message });
-});
-
-httpServer.listen(PORT, () => {
+httpServer.listen(PORT, async () => {
 	console.log("Server is running on port " + PORT);
 	connectDB();
 });

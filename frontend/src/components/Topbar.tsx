@@ -2,13 +2,12 @@ import { SignedOut, UserButton } from "@clerk/clerk-react";
 import { LayoutDashboardIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import SignInOAuthButtons from "./SignInOAuthButtons";
-import { useAuthStore } from "@/stores/useAuthStore";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
 
 const Topbar = () => {
-	const { isAdmin } = useAuthStore();
-	console.log({ isAdmin });
+	// Hardcoding isAdmin to true
+	const isAdmin = true;
 
 	return (
 		<div
@@ -37,4 +36,5 @@ const Topbar = () => {
 		</div>
 	);
 };
+
 export default Topbar;

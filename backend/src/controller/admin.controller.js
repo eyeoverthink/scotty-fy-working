@@ -110,5 +110,14 @@ export const deleteAlbum = async (req, res, next) => {
 };
 
 export const checkAdmin = async (req, res, next) => {
-	res.status(200).json({ admin: true });
+	try {
+		// If we get here, it means the requireAdmin middleware passed
+		res.status(200).json({ 
+			admin: true,
+			userId: req.auth.userId
+		});
+	} catch (error) {
+		console.error('Error in checkAdmin:', error);
+		next(error);
+	}
 };
